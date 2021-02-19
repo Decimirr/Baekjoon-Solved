@@ -1,0 +1,130 @@
+import java.io.*;
+import java.math.*;
+import java.util.*;
+
+public class Main{
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+
+        String[] firstInput = br.readLine().split(" ");
+        int n = Integer.parseInt(firstInput[0]);
+        int m = Integer.parseInt(firstInput[1]);
+        int k = Integer.parseInt(firstInput[2]);
+
+        long[] arr = new long[n+1];
+        for(int i = 1; i <= n; i++){
+            arr[i] = Long.parseLong(br.readLine());
+        }
+
+        SegTree segTree = new SegTree(arr);
+
+        for(int i = 0; i < m+k; i++){
+            String[] input = br.readLine().split(" ");
+            int a = Integer.parseInt(input[0]);
+            int b = Integer.parseInt(input[1]);
+            long c = Long.parseLong(input[2]);
+            if(a == 1){
+                segTree.updateSegTree(b, c, arr);
+            }
+            else{ // a == 2
+                bw.write(segTree.sum(segTree.root, b, (int) c) + "\n");
+            }
+        }
+
+
+        bw.flush();
+
+        br.close();
+        bw.close();
+    }
+
+
+
+    private static void PrintList(List<Integer> list){
+        for(int element : list){
+            System.out.print(element + " ");
+        }
+        System.out.println();
+    }
+}
+
+class SegTree{
+    SegNode root;
+
+    public SegTree(long[] arr){
+        root = new SegNode(1, arr.length-1, 0, null);
+        buildSegTree(root, arr);
+    }
+
+    private void buildSegTree(SegNode node, long[] arr){
+        int start = node.start;
+        int end = node.end;
+        int mid = (start + end) / 2;
+
+        if(start == end){
+            node.value = arr[start];
+        }
+        else{
+            node.left = new SegNode(start, mid, 0, node);
+            buildSegTree(node.left, arr);
+            node.right = new SegNode(mid+1, end, 0, node);
+            buildSegTree(node.right, arr);
+            node.value = node.left.value + node.right.value;
+        }
+
+    }
+
+    public void updateSegTree(int nodeNum, long changeTo, long[] arr){
+        long delta = changeTo - arr[nodeNum];
+        arr[nodeNum] = changeTo;
+
+        SegNode curr = root;
+         while(!curr.isLeaf()){
+             curr.value += delta;
+             curr = nodeNum <= curr.left.end ? curr.left : curr.right;
+         }
+         curr.value += delta;
+    }
+
+    public long sum(SegNode node, int from, int to){
+        if(from > to){
+            int temp = from;
+            from = to;
+            to = temp;
+        }
+
+        if(from <= node.start && node.end <= to){
+            //System.out.println("The node " + node.value + " is in the range.");
+            return node.value;
+        }
+        else if(node.end < from || to < node.start){
+            //System.out.println("The node is not in the range, halting this search.");
+            return 0;
+        }
+        else{
+            //System.out.println("node " + node.value + " is across the range. split the range");
+            return sum(node.left, from, to) + sum(node.right, from, to);
+        }
+    }
+}
+
+class SegNode{
+    int start;
+    int end;
+    long value;
+    SegNode parent;
+    SegNode left;
+    SegNode right;
+
+    public SegNode(int start, int end, int value, SegNode parent){
+        this.start = start;
+        this.end = end;
+        this.value = value;
+        this.parent = parent;
+    }
+
+    public boolean isLeaf(){
+        return start == end;
+    }
+}
