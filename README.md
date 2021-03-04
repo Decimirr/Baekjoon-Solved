@@ -4,6 +4,6 @@
 
 
 
-- [solved.ac 프로필]: https://solved.ac/profile/kim0724
+- [solved.ac 프로필](https://solved.ac/profile/kim0724)
 
   
