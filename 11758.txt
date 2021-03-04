@@ -1,0 +1,58 @@
+import java.io.*;
+import java.util.*;
+
+public class Main{
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+
+        Vector3[] P = new Vector3[3];
+
+        for(int i = 0; i < 3; i++){
+            String[] input = br.readLine().split(" ");
+            P[i] = new Vector3(Integer.parseInt(input[0]), Integer.parseInt(input[1]), 0);
+        }
+
+        Vector3 line1 = P[1].minus(P[0]);
+        Vector3 line2 = P[2].minus(P[1]);
+
+        Vector3 res = Vector3.crossProduct(line1, line2);
+
+        if(res.z == 0) bw.write("0");
+        else if(res.z > 0) bw.write("1");
+        else bw.write("-1");
+
+
+        br.close();
+        bw.flush();
+        bw.close();
+    }
+}
+
+class Vector3{
+    int x;
+    int y;
+    int z;
+
+    public Vector3(int x, int y, int z){
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+
+    public double size(){
+        return Math.sqrt(x*x+y*y+z*z);
+    }
+
+    public Vector3 minus(Vector3 other){
+        return new Vector3(x-other.x, y-other.y, z-other.z);
+    }
+
+    public static Vector3 crossProduct(Vector3 v1, Vector3 v2){
+        return new Vector3(v1.y*v2.z-v1.z*v2.y, v1.z*v2.x-v1.x*v2.z, v1.x*v2.y-v1.y*v2.x);
+    }
+
+    public static int dotProduct(Vector3 v1, Vector3 v2){
+        return v1.x*v2.x+v1.y*v2.y+v1.z*v2.z;
+    }
+}
