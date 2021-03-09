@@ -1,0 +1,67 @@
+import java.io.*;
+
+public class Main{
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+
+        Vector3[] P = new Vector3[4];
+
+        for(int i = 0; i < 2; i++){
+            String[] input = br.readLine().split(" ");
+            P[i*2] = new Vector3(Integer.parseInt(input[0]), Integer.parseInt(input[1]), 0);
+            P[i*2+1] = new Vector3(Integer.parseInt(input[2]), Integer.parseInt(input[3]), 0);
+        }
+
+        Vector3 line1 = Vector3.line(P[0], P[1]);
+        Vector3 line2 = Vector3.line(P[2], P[3]);
+
+        long cond1 = Vector3.crossProduct(line1, Vector3.line(P[0], P[2])) * Vector3.crossProduct(line1, Vector3.line(P[0], P[3]));
+        long cond2 = Vector3.crossProduct(line2, Vector3.line(P[2], P[0])) * Vector3.crossProduct(line2, Vector3.line(P[2], P[1]));
+
+        if(cond1 < 0 && cond2 < 0){
+            bw.write("1");
+        }
+        else{
+            bw.write("0");
+        }
+
+
+        br.close();
+        bw.flush();
+        bw.close();
+    }
+}
+
+class Vector3{
+    long x;
+    long y;
+    long z;
+
+    public Vector3(long x, long y, long z){
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+
+    public double size(){
+        return Math.sqrt(x*x+y*y+z*z);
+    }
+
+    public Vector3 minus(Vector3 other){
+        return new Vector3(x-other.x, y-other.y, z-other.z);
+    }
+
+    public static Vector3 line(Vector3 v1, Vector3 v2){
+        return new Vector3(v2.x-v1.x, v2.y-v1.y, v2.z-v1.z);
+    }
+
+    public static long crossProduct(Vector3 v1, Vector3 v2){
+        //return new Vector3(v1.y*v2.z-v1.z*v2.y, v1.z*v2.x-v1.x*v2.z, v1.x*v2.y-v1.y*v2.x);
+        return new Vector3(v1.y*v2.z-v1.z*v2.y, v1.z*v2.x-v1.x*v2.z, v1.x*v2.y-v1.y*v2.x).z < 0 ? -1 : 1;
+    }
+
+    public static long dotProduct(Vector3 v1, Vector3 v2){
+        return v1.x*v2.x+v1.y*v2.y+v1.z*v2.z;
+    }
+}
