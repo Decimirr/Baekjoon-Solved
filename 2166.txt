@@ -1,0 +1,69 @@
+import java.io.*;
+
+public class Main{
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+
+        int n = Integer.parseInt(br.readLine());
+        Vector3[] dots = new Vector3[n];
+        for(int i = 0; i < n; i++){
+            String[] input = br.readLine().split(" ");
+            dots[i] = new Vector3(Long.parseLong(input[0]), Long.parseLong(input[1]), 0);
+        }
+
+        System.out.printf("%.1f", Geometry.area(dots));
+
+        br.close();
+        bw.flush();
+        bw.close();
+    }
+}
+
+class Geometry{
+
+    public static double area(Vector3[] dots){
+        double sum = 0;
+        int n = dots.length;
+        for(int i = 0; i < n-2; i++){
+            sum += Vector3.crossProduct(dots[n-1].minus(dots[i]), dots[n-1].minus(dots[i+1])).z;
+        }
+
+        sum /= 2;
+        sum = Math.abs(sum);
+        return sum;
+    }
+}
+
+
+class Vector3{
+    long x;
+    long y;
+    long z;
+
+    public Vector3(long x, long y, long z){
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+
+    public double magnitude(){
+        return Math.sqrt(x*x+y*y+z*z);
+    }
+
+    public Vector3 minus(Vector3 other){
+        return new Vector3(x-other.x, y-other.y, z-other.z);
+    }
+
+    public static Vector3 line(Vector3 v1, Vector3 v2){
+        return new Vector3(v2.x-v1.x, v2.y-v1.y, v2.z-v1.z);
+    }
+
+    public static Vector3 crossProduct(Vector3 v1, Vector3 v2){
+        return new Vector3(v1.y*v2.z-v1.z*v2.y, v1.z*v2.x-v1.x*v2.z, v1.x*v2.y-v1.y*v2.x);
+    }
+
+    public static long dotProduct(Vector3 v1, Vector3 v2){
+        return v1.x*v2.x+v1.y*v2.y+v1.z*v2.z;
+    }
+}
